@@ -1,0 +1,85 @@
+﻿@page "/faculty"
+@layout MainLayout
+
+@inherits FacultyBase
+
+<br />
+
+@if (userRole == RoleConstant.SUPERADMIN) 
+{
+    <MudContainer>
+        <MudButton Variant="@Variant.Filled" Color="Color.Primary" OnClick="OpenAddFaculty" Style="text-align:right;">Add a Faculty</MudButton>
+    </MudContainer>
+}
+<br />
+<MudContainer>
+    <MudTable Items="@facultyMessage" Dense="true" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Faculty Records </MudText>
+            <MudSpacer />
+            <MudTextField Immediate="true" T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>Faculty Name</MudTh>
+            <MudTh>Created Date</MudTh>
+            <MudTh>Actions</MudTh>
+        </HeaderContent>
+        <RowTemplate Context="item">
+            <MudTd DataLabel="Faculty Name">@item.FacultyName</MudTd>
+            <MudTd DataLabel="Created Date">@item.CreatedDate.ToDateTime().AddHours(5).AddMinutes(45).ToString("ddd, dd MMM yyy")</MudTd>
+            <MudTd DataLabel="Actions">
+                <MudSpacer />
+                @if (userRole == RoleConstant.SUPERADMIN) 
+                {
+                    <MudTooltip Text="Edit Faculty">
+                        <MudButton Variant="Variant.Filled" OnClick="@(()=>OpenUpadteFacultyDialog(item))" Color="Color.Success">
+                            <MudIcon Icon="fas fa-edit"></MudIcon>
+                        </MudButton>
+                    </MudTooltip>
+                    <MudTooltip Text="Delete Faculty">
+                        <MudButton Variant="Variant.Filled" OnClick="@(()=>OpenDeleteFacultyDialog(item))" Color="Color.Error">
+                            <MudIcon Icon="@Icons.Filled.Delete"></MudIcon>
+                        </MudButton>
+                    </MudTooltip>
+                }
+            </MudTd>
+        </RowTemplate>
+        <NoRecordsContent>
+            <MudText>No matching records found</MudText>
+        </NoRecordsContent>
+        <LoadingContent>
+            <MudText>Loading...</MudText>
+        </LoadingContent>
+    </MudTable>
+</MudContainer>
+
+@code
+{
+    public async Task OpenDeleteFacultyDialog(FacultyMessage message)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("info", message);
+        var facultyDelete = DialogService.Show<DeleteFacultyDialog>($"Are you sure?", parameters);
+
+        var result = await facultyDelete.Result;
+        await FetchData("");
+    }
+
+    public async Task OpenAddFaculty()
+    {
+        var dialog = DialogService.Show<AddFacultyDialog>("Add a faculty");
+        var result = await dialog.Result;
+        await FetchData("");
+    }
+
+    public async Task OpenUpadteFacultyDialog(FacultyMessage message)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("info", message);
+        var facultyUpdate = DialogService.Show<UpdateFacultyDialog>($"Are you sure?", parameters);
+
+        var result = await facultyUpdate.Result;
+        await FetchData("");
+    }
+}

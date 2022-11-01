@@ -1,0 +1,83 @@
+﻿@page "/"
+@layout MainLayout
+@inherits IndexBase
+
+<PageTitle>Home</PageTitle>
+
+<AuthorizeView>
+    <Authorized>
+        <br/>
+        <MudContainer>
+            @if (userRole == RoleConstant.STUDENT) 
+            {
+                <h1>Hello @currentStudentMessage.FirstName!</h1>
+
+                <MudText>Welcome to your app.</MudText>
+
+                <MudGrid>
+                    <MudItem xs="6">
+                        <MudCard>
+                            <MudCardHeader>
+                                <CardHeaderAvatar>
+                                    <MudAvatar Color="Color.Secondary">@mudAvatarText</MudAvatar>
+                                </CardHeaderAvatar>
+                                <CardHeaderContent>
+                                    <MudText Typo="Typo.body1">@currentStudentMessage.FirstName @currentStudentMessage.LastName</MudText>
+                                    <MudText Typo="Typo.body2">@currentStudentMessage.Faculty</MudText>
+                                </CardHeaderContent>
+                                @*<CardHeaderActions>
+                                    <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Default" />
+                                </CardHeaderActions>*@
+                            </MudCardHeader>
+                            <MudCardContent>
+                                <MudText Typo="Typo.body2">Batch: @currentStudentMessage.Batch</MudText>
+                                <MudText Typo="Typo.body2">Registration Number: @currentStudentMessage.RegistrationNumber</MudText>
+                                <MudText Typo="Typo.body2">Exam Number: @currentStudentMessage.ExamNumber</MudText>
+                                <MudText Typo="Typo.body2"> Roll Number: @currentStudentMessage.RollNumber</MudText>
+                            </MudCardContent>
+                            @*<MudCardActions>
+                                <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Default" />
+                                <MudIconButton Icon="@Icons.Material.Filled.Share" Color="Color.Default" />
+                            </MudCardActions>*@
+                        </MudCard>
+                    </MudItem>
+                </MudGrid>
+            }
+            else if(userRole == RoleConstant.SUPERADMIN || userRole == RoleConstant.DEPARTMENTADMIN)
+            {
+                <MudGrid>
+                    <MudItem xs="6">
+                        <MudCard>
+                            <MudCardHeader>
+                                <CardHeaderAvatar>
+                                    <MudAvatar Color="Color.Secondary">@mudAvatarText</MudAvatar>
+                                </CardHeaderAvatar>
+                                <CardHeaderContent>
+                                    <MudText Typo="Typo.body1">@currentUserMessage.GivenName @currentUserMessage.SurName</MudText>
+                                    <MudText Typo="Typo.body2">@currentUserMessage.Role</MudText>
+                                </CardHeaderContent>
+                                @*<CardHeaderActions>
+                            <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Default" />
+                            </CardHeaderActions>*@
+                            </MudCardHeader>
+                            <MudCardContent>
+                                <MudText Typo="Typo.body2">Email Address: @currentUserMessage.EmailAddress</MudText>
+                                <MudText Typo="Typo.body2">Username: @currentUserMessage.UserName</MudText>
+                            </MudCardContent>
+                            @*<MudCardActions>
+                        <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Default" />
+                        <MudIconButton Icon="@Icons.Material.Filled.Share" Color="Color.Default" />
+                        </MudCardActions>*@
+                        </MudCard>
+                    </MudItem>
+                </MudGrid>
+            }
+
+        </MudContainer>
+    </Authorized>
+    <NotAuthorized>
+        @{
+            _navigationManager.NavigateTo("/Account/login");
+        }
+    </NotAuthorized>
+</AuthorizeView>
